@@ -88,6 +88,19 @@ const startServer = async () => {
       await seedData(false);
     }
 
+    server.on('error', (err) => {
+      if (err.code === 'EADDRINUSE') {
+        console.error(`\n❌ [CivicFix Server] Port ${PORT} is already in use!`);
+        console.error(`👉 Reason: Another process (or Docker container) is already using port ${PORT}.`);
+        console.error(`👉 Fix: Stop the existing process or run:`);
+        console.error(`   PowerShell: Stop-Process -Id (Get-NetTCPConnection -LocalPort ${PORT}).OwningProcess -Force`);
+        console.error(`   Docker:     docker compose down\n`);
+      } else {
+        console.error('[CivicFix Server] Error:', err.message);
+      }
+      process.exit(1);
+    });
+
     server.listen(PORT, () => {
       console.log(`[CivicFix Server] Running in ${process.env.NODE_ENV || 'development'} mode on port ${PORT}`);
       console.log(`[CivicFix Server] API Base URL: http://localhost:${PORT}/api/v1`);
