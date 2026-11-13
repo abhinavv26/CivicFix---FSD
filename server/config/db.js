@@ -31,10 +31,22 @@ const connectDB = async () => {
     return conn;
   } catch (err) {
     const isRemote = primaryUri.includes('mongodb.net') || primaryUri.includes('mongodb+srv');
-    console.warn(`[MongoDB] ⚠️ Primary connection to ${isRemote ? 'MongoDB Atlas' : primaryUri} failed: ${err.message}`);
+    console.error(`[MongoDB] ❌ Primary connection to ${isRemote ? 'MongoDB Atlas' : primaryUri} failed: ${err.message}`);
     
-    if (process.env.NODE_ENV === 'production') {
-      console.error('[MongoDB] ❌ Production mode does not allow in-memory fallback. Exiting...');
+    // When connecting to Atlas or in production, NEVER attempt in-memory fallback
+    if (isRemote || process.env.NODE_ENV === 'production') {
+      console.error('\n================================================================');
+      console.error(' [MongoDB Atlas Connection Issue Detected]');
+      console.error(' Error: Could not connect to MongoDB Atlas from this server.');
+      console.error(' ');
+      console.error(' 👉 HOW TO FIX:');
+      console.error(' 1. Go to https://cloud.mongodb.com');
+      console.error(' 2. In the left menu under Security, click "Network Access"');
+      console.error(' 3. Click "+ Add IP Address"');
+      console.error(' 4. Click "Allow Access from Anywhere" (adds 0.0.0.0/0)');
+      console.error(' 5. Click "Confirm" and wait 1 minute for it to apply');
+      console.error(' 6. In Render Environment variables, verify MONGO_URI has %40 for @ in password');
+      console.error('================================================================\n');
       process.exit(1);
     }
 

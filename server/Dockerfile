@@ -1,16 +1,13 @@
-# Multi-stage or lightweight production Node container
-FROM node:20-alpine
+# Production Node container (Debian-based slim for broad glibc compatibility)
+FROM node:20-slim
 
 # Set working directory
 WORKDIR /app
 
-# Install build dependencies if needed
-RUN apk add --no-cache python3 make g++
-
 # Copy package files
 COPY package*.json ./
 
-# Install dependencies (production + required runtime tools)
+# Install production dependencies
 RUN npm ci --only=production
 
 # Copy application source
