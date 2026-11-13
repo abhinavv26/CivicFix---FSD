@@ -6,7 +6,8 @@
   "scripts": {
     "start": "node server.js",
     "dev": "node server.js",
-    "seed": "node seeds/seed.js"
+    "seed": "node seeds/seed.js",
+    "test": "node test-api.js && node test-negative-and-rbac.js"
   },
   "dependencies": {
     "bcryptjs": "^3.0.2",

@@ -16,6 +16,11 @@ jobs:
         image: mongo:6.0
         ports:
           - 27017:27017
+        options: >-
+          --health-cmd "mongosh --eval 'db.runCommand({ ping: 1 })' || mongo --eval 'db.runCommand({ ping: 1 })'"
+          --health-interval 5s
+          --health-timeout 2s
+          --health-retries 5
 
     steps:
       - name: Checkout Code
@@ -36,7 +41,12 @@ jobs:
         working-directory: ./server
         run: |
           cp .env.example .env
-          echo "MONGO_URI=mongodb://localhost:27017/civicfix" >> .env
+          echo "MONGO_URI=mongodb://127.0.0.1:27017/civicfix" > .env
+          echo "PORT=5000" >> .env
+          echo "NODE_ENV=development" >> .env
+          echo "JWT_SECRET=civicfix_jwt_super_secure_secret_key_2026_demo" >> .env
+          echo "JWT_EXPIRES_IN=7d" >> .env
+          echo "CLIENT_URL=http://localhost:5173" >> .env
 
       - name: Seed Database Test
         working-directory: ./server
@@ -44,9 +54,7 @@ jobs:
 
       - name: Run Backend Integration & Security Tests
         working-directory: ./server
-        run: |
-          node test-api.js
-          node test-negative-and-rbac.js
+        run: npm test
 
   client-ci:
     name: Frontend Build & Lint

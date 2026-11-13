@@ -1,5 +1,6 @@
 require('dotenv').config();
 const http = require('http');
+const { app, server } = require('./server');
 
 const makeRequest = (options, postData = null) => {
   return new Promise((resolve, reject) => {
@@ -25,10 +26,31 @@ const makeRequest = (options, postData = null) => {
   });
 };
 
+const waitForServer = async () => {
+  for (let i = 0; i < 30; i++) {
+    try {
+      const res = await makeRequest({
+        hostname: '127.0.0.1',
+        port: 5000,
+        path: '/api/v1/health',
+        method: 'GET',
+      });
+      if (res.status === 200) return true;
+    } catch (e) {
+      // wait 500ms
+    }
+    await new Promise((r) => setTimeout(r, 500));
+  }
+  throw new Error('Server did not start within 15 seconds');
+};
+
 const runNegativeAndRBACTests = async () => {
   console.log('\n===============================================================');
   console.log('🔒 CIVICFIX COMPREHENSIVE SECURITY, RBAC & VALIDATION TEST SUITE');
   console.log('===============================================================\n');
+
+  console.log('Waiting for CivicFix server and database to initialize...');
+  await waitForServer();
 
   let results = [];
   const record = (testName, expectedStatus, actualStatus, pass, details = '') => {
