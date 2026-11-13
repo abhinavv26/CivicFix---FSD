@@ -1,0 +1,70 @@
+version: '3.8'
+
+services:
+  # 1. MongoDB Database Service
+  mongo:
+    image: mongo:6.0
+    container_name: civicfix-mongo
+    restart: unless-stopped
+    ports:
+      - '27017:27017'
+    volumes:
+      - mongo-data:/data/db
+    networks:
+      - civicfix-net
+    healthcheck:
+      test: ['CMD', 'mongosh', '--eval', "db.adminCommand('ping')"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # 2. Node.js + Express Backend API & Real-Time Service
+  server:
+    build:
+      context: ./server
+      dockerfile: Dockerfile
+    container_name: civicfix-server
+    restart: unless-stopped
+    ports:
+      - '5000:5000'
+    environment:
+      - PORT=5000
+      - NODE_ENV=production
+      - MONGO_URI=mongodb://mongo:27017/civicfix
+      - JWT_SECRET=civicfix_jwt_super_secure_secret_key_2026_demo
+      - JWT_EXPIRES_IN=7d
+      - CLIENT_URL=http://localhost:5173
+      - CLOUDINARY_CLOUD_NAME=${CLOUDINARY_CLOUD_NAME:-}
+      - CLOUDINARY_API_KEY=${CLOUDINARY_API_KEY:-}
+      - CLOUDINARY_API_SECRET=${CLOUDINARY_API_SECRET:-}
+    depends_on:
+      mongo:
+        condition: service_healthy
+    volumes:
+      - server-uploads:/app/uploads
+    networks:
+      - civicfix-net
+
+  # 3. React Vite Frontend & Nginx Production Proxy
+  client:
+    build:
+      context: ./client
+      dockerfile: Dockerfile
+    container_name: civicfix-client
+    restart: unless-stopped
+    ports:
+      - '5173:80'
+    depends_on:
+      - server
+    networks:
+      - civicfix-net
+
+volumes:
+  mongo-data:
+    driver: local
+  server-uploads:
+    driver: local
+
+networks:
+  civicfix-net:
+    driver: bridge

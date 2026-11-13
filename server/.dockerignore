@@ -1,0 +1,10 @@
+node_modules
+npm-debug.log
+.env
+.git
+.gitignore
+test-api.js
+test-negative-and-rbac.js
+test-browser-e2e.js
+uploads/*
+!uploads/.gitkeep

@@ -1,0 +1,233 @@
+{
+  "info": {
+    "name": "CivicFix API Collection",
+    "description": "Postman Collection for testing all CivicFix REST endpoints including Auth, Issues, Staff, Admin, Notifications, and Users.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:5000/api/v1",
+      "type": "string"
+    },
+    {
+      "key": "token",
+      "value": "",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "Auth",
+      "item": [
+        {
+          "name": "1. Login Admin",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"admin@civicfix.com\",\n  \"password\": \"Admin@123\"\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/auth/login", "host": ["{{baseUrl}}"], "path": ["auth", "login"] }
+          }
+        },
+        {
+          "name": "2. Login Staff",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"staff@civicfix.com\",\n  \"password\": \"Staff@123\"\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/auth/login", "host": ["{{baseUrl}}"], "path": ["auth", "login"] }
+          }
+        },
+        {
+          "name": "3. Login Citizen",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"citizen@civicfix.com\",\n  \"password\": \"Citizen@123\"\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/auth/login", "host": ["{{baseUrl}}"], "path": ["auth", "login"] }
+          }
+        },
+        {
+          "name": "4. Register Citizen",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Rajesh Patel\",\n  \"email\": \"newcitizen@example.com\",\n  \"password\": \"Password@123\",\n  \"role\": \"citizen\",\n  \"phone\": \"+91 9988776655\"\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/auth/register", "host": ["{{baseUrl}}"], "path": ["auth", "register"] }
+          }
+        },
+        {
+          "name": "5. Get Profile (/me)",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": { "raw": "{{baseUrl}}/auth/me", "host": ["{{baseUrl}}"], "path": ["auth", "me"] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Issues",
+      "item": [
+        {
+          "name": "Get All Issues (Paginated)",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/issues?page=1&limit=10&category=All&status=All",
+              "host": ["{{baseUrl}}"],
+              "path": ["issues"],
+              "query": [
+                { "key": "page", "value": "1" },
+                { "key": "limit", "value": "10" },
+                { "key": "category", "value": "All" },
+                { "key": "status", "value": "All" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Report New Issue",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Broken streetlight near Shivaji Park\",\n  \"category\": \"Streetlight\",\n  \"description\": \"Lamp post is completely dark causing safety issues for pedestrians after 8 PM.\",\n  \"lat\": 19.0269,\n  \"lng\": 72.8378,\n  \"address\": \"Shivaji Park, Dadar West, Mumbai 400028\"\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": { "raw": "{{baseUrl}}/issues", "host": ["{{baseUrl}}"], "path": ["issues"] }
+          }
+        },
+        {
+          "name": "Toggle Upvote Issue",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": { "raw": "{{baseUrl}}/issues/{{issueId}}/upvote", "host": ["{{baseUrl}}"], "path": ["issues", "{{issueId}}", "upvote"] }
+          }
+        },
+        {
+          "name": "Add Comment to Issue",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"content\": \"I also noticed this issue yesterday! Thank you for reporting.\"\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/issues/{{issueId}}/comments", "host": ["{{baseUrl}}"], "path": ["issues", "{{issueId}}", "comments"] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Staff",
+      "item": [
+        {
+          "name": "Get Assigned Issues",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": { "raw": "{{baseUrl}}/staff/issues", "host": ["{{baseUrl}}"], "path": ["staff", "issues"] }
+          }
+        },
+        {
+          "name": "Update Issue Status (In Progress / Resolved)",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"In Progress\",\n  \"note\": \"Field inspection completed, crew starting work tomorrow morning.\"\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/staff/issues/{{issueId}}/status", "host": ["{{baseUrl}}"], "path": ["staff", "issues", "{{issueId}}", "status"] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Admin",
+      "item": [
+        {
+          "name": "Get Admin Analytics & Stats",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": { "raw": "{{baseUrl}}/admin/stats", "host": ["{{baseUrl}}"], "path": ["admin", "stats"] }
+          }
+        },
+        {
+          "name": "Get Staff List for Assignment",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": { "raw": "{{baseUrl}}/admin/staff-list", "host": ["{{baseUrl}}"], "path": ["admin", "staff-list"] }
+          }
+        },
+        {
+          "name": "Assign Issue to Staff",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"assignedTo\": \"{{staffId}}\",\n  \"note\": \"High priority road pothole repair\"\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/admin/issues/{{issueId}}/assign", "host": ["{{baseUrl}}"], "path": ["admin", "issues", "{{issueId}}", "assign"] }
+          }
+        },
+        {
+          "name": "List Users",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": { "raw": "{{baseUrl}}/admin/users", "host": ["{{baseUrl}}"], "path": ["admin", "users"] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Notifications",
+      "item": [
+        {
+          "name": "Get Notifications",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": { "raw": "{{baseUrl}}/notifications", "host": ["{{baseUrl}}"], "path": ["notifications"] }
+          }
+        },
+        {
+          "name": "Mark All Read",
+          "request": {
+            "method": "PATCH",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": { "raw": "{{baseUrl}}/notifications/mark-all-read", "host": ["{{baseUrl}}"], "path": ["notifications", "mark-all-read"] }
+          }
+        }
+      ]
+    }
+  ]
+}
