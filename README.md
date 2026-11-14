@@ -7,6 +7,20 @@
 [![TailwindCSS](https://img.shields.io/badge/TailwindCSS-v3.4-38BDF8?logo=tailwindcss)](https://tailwindcss.com/)
 [![Docker](https://img.shields.io/badge/Docker-Enabled-2496ED?logo=docker)](https://www.docker.com/)
 
+---
+
+## 🚀 Live Demo
+
+| Service | Endpoint | Description |
+| :--- | :--- | :--- |
+| **Frontend Application** | [https://civic-fix-fsd.vercel.app](https://civic-fix-fsd.vercel.app) | Live production client on Vercel |
+| **Backend REST & WebSocket API** | [https://civicfix-api-b8xa.onrender.com](https://civicfix-api-b8xa.onrender.com) | Live production server on Render |
+| **Backend API Health Check** | [https://civicfix-api-b8xa.onrender.com/api/v1/health](https://civicfix-api-b8xa.onrender.com/api/v1/health) | Operational status endpoint |
+
+> **Quick Testing**: You can log in using the [Demo & Test Credentials](#-demo--test-credentials) below or use the 1-click fill buttons directly on the login page.
+
+---
+
 **CivicFix** is a production-quality, full-stack MERN application that modernizes municipal governance and infrastructure maintenance across city wards. It enables citizens to report civic defects (potholes, garbage, streetlights, water leakage) with photos and precise GPS map pins in seconds, allows municipal administrators to dispatch field crews, and empowers field workers to track work orders and submit photographic proof of resolution.
 
 ---
